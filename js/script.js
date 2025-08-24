@@ -26,7 +26,6 @@ if (galleryRoot) {
   galleryRoot.addEventListener("click", (event) => {
     event.preventDefault();
     if (event.target.classList.contains("gallery-image")) {
-      const throttledNavigate = _.throttle(onNavigate, 400);
       const instance = basicLightbox.create(
         `
         <img src="${event.target.dataset.original}" data-original="${event.target.dataset.original}" alt="${event.target.alt}"  class="slideshowImage">
@@ -40,7 +39,6 @@ if (galleryRoot) {
           },
         }
       );
-      instance.show();
 
       function onNavigate(event) {
         if (event.code === "Escape" || !instance.visible()) {
@@ -63,6 +61,9 @@ if (galleryRoot) {
           currentImage.dataset.original = dataArr[index];
         }
       }
+      const throttledNavigate = _.throttle(onNavigate, 400);
+
+      instance.show();
     }
   });
 
