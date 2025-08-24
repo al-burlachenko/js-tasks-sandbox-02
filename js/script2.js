@@ -25,18 +25,18 @@ if (galleryRoot) {
 
   galleryRoot.addEventListener("click", (event) => {
     event.preventDefault();
+    console.log(event.target);
     if (event.target.classList.contains("gallery-image")) {
-      const throttledNavigate = _.throttle(onNavigate, 400);
       const instance = basicLightbox.create(
         `
-        <img src="${event.target.dataset.original}" data-original="${event.target.dataset.original}" alt="${event.target.alt}"  class="slideshowImage">
+        <img src="${event.target.dataset.original}" data-original="${event.target.dataset.original}" alt="${event.target.alt}  class="slideshowImage">
 `,
         {
           onShow: () => {
-            document.addEventListener("keydown", throttledNavigate);
+            document.addEventListener("keydown", onNavigate);
           },
           onClose: () => {
-            document.removeEventListener("keydown", throttledNavigate);
+            document.removeEventListener("keydown", onNavigate);
           },
         }
       );
@@ -47,18 +47,14 @@ if (galleryRoot) {
           instance.close();
           return;
         }
-
-        const dataArr = images.map((item) => item.original);
         const currentImage = document.querySelector(".slideshowImage");
-        if (!currentImage) return;
+        const dataArr = images.map((item) => item.original);
         if (instance.visible()) {
           let index = dataArr.indexOf(currentImage.dataset.original);
-          if (event.code === "ArrowRight") index += 1;
-          if (event.code === "ArrowLeft") index -= 1;
-
-          if (index > dataArr.length - 1) index = 0;
-          if (index < 0) index = dataArr.length - 1;
-
+          index = event.code === "ArrowRight" ? index + 1 : index;
+          index = event.code === "ArrowLeft" ? index - 1 : index;
+          index = index > dataArr.length - 1 ? 0 : index;
+          index = index < 0 ? dataArr.length - 1 : index;
           currentImage.src = dataArr[index];
           currentImage.dataset.original = dataArr[index];
         }
